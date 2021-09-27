@@ -197,7 +197,7 @@ ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
 
 # QC & Pre-processing
 
-![](./GeomxQCWorkflow.png)
+![](./Images/GeomxQCWorkflow.png)
 
 The steps above encompass the standard pre-processing workflow for GeoMx data. In short, they represent the selection of ROI/AOI segments and genes based on quality control (QC) or limit of quantification (LOQ) metrics and data normalization. 
 
@@ -791,7 +791,7 @@ Overall, there are two flavors of the LMM model when used with GeoMx data: i) wi
 
 When comparing features that co-exist in a given tissue section (e.g. glomeruli vs tubules in DKD kidneys), a random slope is included in the LMM model. When comparing features that are mutually exclusive in a given tissue section (healthy glomeruli versus DKD glomeruli) the LMM model does not require a random slope. We represent the two variations on the LMM in the schematic below:
 
-![](./GeomxDETypes.png)
+![](./Images/GeomxDETypes.png)
 
 For more details on the LMM, please refer to the [lme4 package](https://cran.r-project.org/web/packages/lme4/) and the [lmerTest package](https://cran.r-project.org/web/packages/lmerTest/).
 
@@ -1089,7 +1089,7 @@ In section 'Loading the Demo Data', we see that the `demoData` object is stored 
 
 <center>
 
-![](./GeomxSetStructure.png)
+![](./Images/GeomxSetStructure.png)
 
 </center>
 
