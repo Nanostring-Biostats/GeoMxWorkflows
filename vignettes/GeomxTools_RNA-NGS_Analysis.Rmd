@@ -110,7 +110,7 @@ The key data files are:
 
 * DCCs files - expression count data and sequencing quality metadata
 * PKCs file(s) - probe assay metadata describing the gene targets present in the data
-* Annotation file - useful tissue information, including the type of segment profiled (ex: glomerulus vs. tubule), segment area/nuclei count, and other tissue characteristics (ex: diseased vs. healthy)
+* Annotation file - useful tissue information, including the type of segment profiled (ex: glomerulus vs. tubule), segment area/nuclei count, and other tissue characteristics (ex: diseased vs. healthy). If working with a new dataset use the lab worksheet used to generate the DCC files, as the annotation order of NTCs is important to ensure proper processing of files.
 
 We first locate the downloaded files:
 
