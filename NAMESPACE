@@ -1,0 +1,27 @@
+### - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+### Imports
+import(S4Vectors)
+import(Biobase)
+import(data.table)
+importClassesFrom(NanoStringNCTools, SignatureSet)
+importClassesFrom(S4Vectors,DataFrame)
+importClassesFrom(GeomxTools, NanoStringGeoMxSet)
+importFrom(NanoStringNCTools, SignatureSet)
+importFrom(rjson, fromJSON)
+importFrom(readxl, read_xlsx)
+importFrom(EnvStats, geoMean)
+importFrom(reshape2, dcast)
+importFrom(utils, read.csv)
+importFrom(stats, as.formula)
+importFrom(stats, quantile)
+importFrom(stats, weights)
+importFrom(methods, callGeneric)
+importFrom(methods, callNextMethod)
+importFrom(methods, is)
+importFrom(methods, validObject)
+importFrom(utils, write.table)
+importFrom(outliers, grubbs.test)
+importFrom(BiocGenerics, design)
+importFrom(BiocGenerics, "design<-")
+
+

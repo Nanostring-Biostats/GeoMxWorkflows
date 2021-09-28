@@ -91,12 +91,13 @@ Let's install and load the GeoMx packages we need:
 install.packages("devtools")
 devtools::install_github("Nanostring-Biostats/NanoStringNCTools")
 devtools::install_github("Nanostring-Biostats/GeomxTools", ref = "dev")
-
+devtools::install_github("Nanostring-Biostats/GeoMxWorkflows", ref = "main")
 ```
 
 ```{r libs, message = FALSE, warning = FALSE, eval = TRUE}
 library(NanoStringNCTools)
 library(GeomxTools)
+library(GeoMxWorkflows)
 ```
 
 ## Loading Data
@@ -116,13 +117,22 @@ We first locate the downloaded files:
 ```{r quickstart, message = FALSE, warning = FALSE}
 # Reference the main folder 'file.path' containing the sub-folders with each
 # data file type:
-datadir <- file.path("~/DA Vignettes/GeoMxWorkflows")
+datadir <- system.file("extdata", "WTA_NGS_Example",
+                       package="GeoMxWorkflows")
+# to locate a specific file path replace the above line with
+# datadir <- file.path("~/Folder/SubFolder/DataLocation")
+# replace the Folder, SubFolder, DataLocation as needed
 
+# the DataLocation folder should contain a dccs, pkcs, and annotation folder
+# with each set of files present as needed
+```
+
+```{r locateFiles, message = FALSE, warning = FALSE}
 # automatically list files in each directory for use
 DCCFiles <- dir(file.path(datadir, "dccs"), pattern = ".dcc$",
                 full.names = TRUE, recursive = TRUE)
-PKCFiles <- dir(file.path(datadir, "pkcs"), pattern = ".pkc$",
-                full.names = TRUE, recursive = TRUE)
+PKCFiles <- unzip(zipfile = dir(file.path(datadir, "pkcs"), pattern = ".zip$",
+                                full.names = TRUE, recursive = TRUE))
 SampleAnnotationFile <-
   dir(file.path(datadir, "annotation"), pattern = ".xlsx$",
       full.names = TRUE, recursive = TRUE)

@@ -12,7 +12,7 @@ Suggests:
     rmarkdown,
     knitr,
     testthat (>= 3.0.0)
-License: 
+License: MIT
 BiocType: Workflow
 biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow
 VignetteEngine: knitr::rmarkdown
