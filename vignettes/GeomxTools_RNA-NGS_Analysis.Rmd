@@ -811,16 +811,7 @@ One informative exploration is to study differences between morphological struct
 
 In this analysis we save log~2~ fold change estimates and P-values across all levels in the factor of interest. We also apply a Benjamini-Hochberg multiple test correction.
 
-``` {r cheatDE, eval = TRUE, echo = FALSE}
-# below is work-around text to quick load DE results from a saved csv for convenience
-# THIS SECTION WILL NOT BE SHOWN, is only for speed of iteration
-results <- as.data.frame(read.csv("~/DE_results_for_testing.csv", row.names = 1))
-colnames(results) <- c('Gene','Subset','Contrast','Estimate','Pr(>|t|)','FDR')
-
-# turn eval to TRUE in next code block to re-run LMM code (will take ~15-30 minutes on a single core local machine)
-```
-
-``` {r addPhenoData, eval = TRUE}
+``` {r deNativeComplex, eval = TRUE, message = FALSE, warning = FALSE}
 # convert test variables to factors
 pData(target_demoData)$testRegion <- 
   factor(pData(target_demoData)$region, c("glomerulus", "tubule"))
@@ -829,8 +820,6 @@ pData(target_demoData)[["slide"]] <-
 assayDataElement(object = target_demoData, elt = "log_q") <-
   assayDataApply(target_demoData, 2, FUN = log, base = 2, elt = "q_norm")
 
-```
-``` {r deNativeComplex, eval = FALSE, echo = TRUE}
 # run LMM:
 # formula follows conventions defined by the lme4 package
 results <- c()
@@ -865,11 +854,6 @@ for(status in c("DKD", "normal")) {
 
 Note that the example uses `nCores = parallel:detectCores()` and `multiCore = FALSE` to implement the `parallel` package clustering of all available cores. If working in a Windows environment use `multicore = FALSE`. If in a unix-based environment setting `multicore = TRUE` will parallelize using the `mcapply` package. If you do not want to use all available cores, change the `nCores` to the desired number to use.
 
-``` {r saveDETable, eval = TRUE, echo = FALSE}
-# Save DE table (either same file read in or new calculation)
-write.csv(results, "~/DE_results_for_testing.csv")
-```
-
 ## Interpreting the results table
 
 Let's review the results from the analysis of glomeruli to tubules in healthy (normal) patients. We saved the LMM outputs into a table (`results`) containing three of the key features for differential expression: the log~2~ fold change value (`Estimate`), P-value (`Pr(>|t|)`), and false-discovery adjusted P-values (`FDR`). Let's take a look at a few genes of interest. The contrast column is used to interpret the log~2~ fold change value as it specifies which level are compared (e.g. positive fold change values when comparing `glomerulus - tubule` indicates an enrichment in the glomerulus, negative indicates enrichment in tubules).
@@ -885,15 +869,8 @@ kable(subset(results, Gene %in% goi & Subset == "normal"), digits = 3,
 ## Between Slide Analysis: Diabetic Kidney Disease vs Healthy
 
 Another informative exploration is to compare tissue cohorts. In this case, we would like to compare diseased versus healthy kidneys. We will focus on glomeruli as our structure. Because we are comparing disease status, which is specific to the entire kidney, we will use the LMM model without a random slope. Disease (`testClass`) is our test variable. Like our previous LMM example, we control for tissue subsampling with `slide name` as the intercept.
-``` {r cheatDE2, eval = TRUE, echo = FALSE}
-# below is work-around text to quick load DE results from a saved csv for convenience
-# THIS SECTION WILL NOT BE SHOWN, is only for speed of iteration
-results2 <- as.data.frame(read.csv("~/DE_results_for_testing2.csv", row.names = 1))
-colnames(results2) <- c('Gene','Subset','Contrast','Estimate','Pr(>|t|)','FDR')
-# turn eval to TRUE in next code block to re-run LMM code (will take ~15-30 minutes on a single core local machine)
-```
 
-``` {r DEsimple, eval = FALSE, echo = TRUE}
+``` {r DEsimple, eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
 # convert test variables to factors
 pData(target_demoData)$testClass <-
   factor(pData(target_demoData)$class, c("normal", "DKD"))
@@ -930,11 +907,6 @@ for(region in c("glomerulus", "tubule")) {
 
 ```
 
-``` {r saveDETable2, eval = FALSE, echo = FALSE}
-# Save DE table (either same file read in or new calculation)
-write.csv(results2, "~/DE_results_for_testing2.csv")
-```
-
 We can review our genes of interest for this comparison as well. Let's focus on results from analysis of tubules
 
 ``` {r DEtable2, echo = TRUE, results = "asis"}
@@ -945,7 +917,6 @@ kable(subset(results2, Gene %in% goi & Subset == "tubule"), digits = 3,
 
 ``` {r glomindex, eval = TRUE, echo = FALSE}
 # since we didn't execute above, ID the glomeruli for later use
-glom <- pData(target_demoData)$region == "glomerulus"
 ```
 
 # Visualizing DE Genes
@@ -1041,6 +1012,8 @@ ggplot(pData(target_demoData),
 Now we can plot these two targets against each other to show the mutually exclusive expression pattern that be used to easily distinguish the two structures. Dashed vertical lines were plotted to represent the maximum observed PLA2R1 expression in glomeruli and and horizontal represent the maximum observed ALDOA expression in the tubules.
 
 ``` {r targetExprs2, fig.width = 8, fig.wide = TRUE, eval = TRUE}
+glom <- pData(target_demoData)$region == "glomerulus"
+
 # show expression of PLA2R1 vs DSP
 ggplot(pData(target_demoData),
        aes(x = assayDataElement(target_demoData["PDHA1", ],
@@ -1070,9 +1043,6 @@ This suggests both of these genes become less specific during the disease proces
 
 In addition to generating individual gene boxplots or volcano plots, we can again create a heatmap from our data. This time rather than utilizing CV to select genes, we can use the P-value or FDR values to select genes. Here, we plot with all genes with an FDR < 0.001.
 
-``` {r pheat2, eval = TRUE, echo = FALSE}
-library(pheatmap)
-```
 ``` {r heatmap, eval = TRUE, fig.width = 8, fig.height = 6.5, fig.wide = TRUE}
 # select top significant genes based on significance, plot with pheatmap
 GOI <- unique(subset(results, `FDR` < 0.001)$Gene)
