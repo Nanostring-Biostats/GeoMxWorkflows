@@ -21,7 +21,7 @@ author:
   affiliation: NanoString Technologies, Inc
 package: GeomxTools
 abstract: >
-  Here we walk through an end-to-end Geomx-NGS gene expression analysis workflow. We start with raw gene expression count files. Using a combination of Nanostring-developed (GeoMxTools & NanoStringNCTools) and open source R packages, we evaluate samples and expression targets and prepare gene-level count data for downstream analysis. To understand our spatial data, we perform unsupervising clustering, dimension reduction, and differential gene expression analyses and visually explore the results.
+  Here we walk through an end-to-end GeoMx-NGS gene expression analysis workflow. We start with raw gene expression count files. Using a combination of NanoString-developed (GeoMxTools & NanoStringNCTools) and open source R packages, we evaluate samples and expression targets and prepare gene-level count data for downstream analysis. To understand our spatial data, we perform unsupervised clustering, dimension reduction, and differential gene expression analyses and visually explore the results.
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
   BiocStyle::html_document:
@@ -66,7 +66,7 @@ knitr::opts_chunk$set(
 
 In this vignette, we will introduce a data analysis workflow for GeoMx-NGS mRNA expression data. 
 
-The GeoMx Digital Spatial Profiler (DSP) is a platform for capturing spatially resolved high-plex gene (or protein) expression data from tissue [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/).In particular, formalin-fixed paraffin-embedded (FFPE) or fresh-frozen (FF) tissue sections are stained with barcoded in-situ hybridization probes that bind to endogenous mRNA transcripts. The user then selects regions of the interest (ROI) to profile; if desired, each ROI segment can be further sub-divided into areas of illumination (AOI) based on tissue morphology. The GeoMx then photo-cleaves and collects expression barcodes for each AOI segment separately for downstream sequencing and data processing.
+The GeoMx Digital Spatial Profiler (DSP) is a platform for capturing spatially resolved high-plex gene (or protein) expression data from tissue [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/). In particular, formalin-fixed paraffin-embedded (FFPE) or fresh-frozen (FF) tissue sections are stained with barcoded in-situ hybridization probes that bind to endogenous mRNA transcripts. The user then selects regions of the interest (ROI) to profile; if desired, each ROI segment can be further sub-divided into areas of illumination (AOI) based on tissue morphology. The GeoMx then photo-cleaves and collects expression barcodes for each AOI segment separately for downstream sequencing and data processing.
 
 The final results are spatially resolved unique expression datasets for every protein-coding gene (>18,000 genes) from every individual segments profiled from tissue.
 
@@ -807,7 +807,7 @@ For more details on the LMM, please refer to the [lme4 package](https://cran.r-p
 
 ## Within Slide Analysis: Glomeruli vs Tubules
 
-One informative exploration is to study differences between morphological structures. In this example, we can study differential expression between glomeruli and tubules. we will focus on the diseased kidney tissues. Because we are comparing structures that co-exist within the a given tissue we will use the LMM model with a random slope. Morphological structure (`Region`) is our test variable. We control for tissue subsampling with `slide name` using a random slope and intercept; the intercept adjusts for the multiple regions placed per unique tissue, since we have one tissue per slide. If multiple tissues are placed per slide, we would change the intercept variable to the unique tissue name (ex: tissue name, Block ID, etc).
+One informative exploration is to study differences between morphological structures. In this example, we can study differential expression between glomeruli and tubules. We will focus on the diseased kidney tissues. Because we are comparing structures that co-exist within the a given tissue we will use the LMM model with a random slope. Morphological structure (`Region`) is our test variable. We control for tissue subsampling with `slide name` using a random slope and intercept; the intercept adjusts for the multiple regions placed per unique tissue, since we have one tissue per slide. If multiple tissues are placed per slide, we would change the intercept variable to the unique tissue name (ex: tissue name, Block ID, etc).
 
 In this analysis we save log~2~ fold change estimates and P-values across all levels in the factor of interest. We also apply a Benjamini-Hochberg multiple test correction.
 
