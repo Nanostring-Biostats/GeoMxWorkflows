@@ -2,7 +2,8 @@
 ### Imports
 import(S4Vectors)
 import(Biobase)
-import(dplyr)
+import(dplyr, 
+       except=c(union, intersect, setdiff, first, setequal, rename, combine))
 import(ggplot2)
 import(ggrepel)
 import(ggforce)

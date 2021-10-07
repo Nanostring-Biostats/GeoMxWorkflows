@@ -38,3 +38,5 @@ vignettes/*.pdf
 # R Environment Variables
 .Renviron
 *.sqlite
+/.vs/VSWorkspaceState.json
+/.vs/GeoMxWorkflows/v16/.suo
