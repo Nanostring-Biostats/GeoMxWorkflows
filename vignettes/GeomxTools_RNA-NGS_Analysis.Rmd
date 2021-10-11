@@ -625,7 +625,7 @@ target_demoData <-
 dim(target_demoData)
 
 # retain only detected genes of interest
-goi <- goi[goi %in% rownames(target_demoData@assayData$exprs)]
+goi <- goi[goi %in% rownames(target_demoData)]
 ```
 
 # Normalization
