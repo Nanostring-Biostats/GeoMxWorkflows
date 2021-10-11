@@ -3,21 +3,21 @@ title: "Analyzing GeoMx-NGS RNA Expression Data with GeomxTools"
 shorttitle: "GeomxTools NGS-RNA Workflow"
 author:
 - name: Jason Reeves
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Prajan Divaker
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Nicole Ortogero
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Maddy Griswold
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Zhi Yang
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Stephanie Zimmerman
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: Rona Vitancol
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 - name: David Henderson
-    affiliation: NanoString Technologies, Inc
+  affiliation: NanoString Technologies, Inc
 package: GeomxTools
 abstract: >
     Here we walk through an end-to-end GeoMx-NGS gene expression analysis  
