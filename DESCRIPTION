@@ -11,7 +11,7 @@ Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = 
              person("Stephanie", "Zimmerman", email = "szimmerman@nanostring.com", role = c("aut")),
              person("Rona", "Vitancol", email = "rvitancol@nanostring.com", role = c("aut")),
              person("Henderson", "David", email = "dhenderson@nanostring.com", role = c("aut")))
-Depends: R (>= 3.6), NanoStringNCTools, GeomxTools
+Depends: R (>= 4.1), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
          methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, ggrepel, ggforce, cowplot,
          scales, umap, Rtsne, pheatmap, BiocStyle
