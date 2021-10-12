@@ -1,3 +1,7 @@
+# GeoMxWorkflows 0.99.2
+
+* Version update for bioconductor build review
+
 # GeoMxWorkflows 0.99.1
 
 NEW FEATURES
