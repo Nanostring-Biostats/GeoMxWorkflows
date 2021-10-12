@@ -590,7 +590,7 @@ pData(target_demoData)$DetectionThreshold <-
         breaks = c(0, 0.01, 0.05, 0.1, 0.15, 1),
         labels = c("<1%", "1-5%", "5-10%", "10-15%", ">15%"))
 
-# stacked barplot of different cutpoints (1%, 5%, 10%, 15%)
+# stacked bar plot of different cut points (1%, 5%, 10%, 15%)
 ggplot(pData(target_demoData),
        aes(x = DetectionThreshold)) +
     geom_bar(aes(fill = region)) +
@@ -667,7 +667,7 @@ this idea, we create a small gene list (`goi`) to review.
 
 
 ``` {r goi detection}
-library(scales) # for precent
+library(scales) # for percent
 
 # Calculate detection rate:
 LOQ_Mat <- LOQ_Mat[, colnames(target_demoData)]
@@ -848,7 +848,7 @@ target_demoData <- normalize(target_demoData , data_type = "RNA",
                              toElt = "neg_norm")
 ```
 
-To demonstrate the effects of normalization, we graph representative boxplots 
+To demonstrate the effects of normalization, we graph representative box plots 
 of the data for individual segments before and after normalization.
 
 ```{r normplot, fig.small = TRUE}
@@ -917,7 +917,7 @@ then identify genes with high CVs that should have large differences across
 the various profiled segments. This unbiased approach can reveal highly 
 variable genes across the study. 
 
-We plot the results using unsupervised heirarchical clustering, displayed as a 
+We plot the results using unsupervised hierarchical clustering, displayed as a 
 heatmap.
 
 ``` {r CVheatmap, eval = TRUE, echo = TRUE, fig.width = 8, fig.height = 6.5, fig.wide = TRUE}
@@ -1034,7 +1034,7 @@ for(status in c("DKD", "normal")) {
 Note that the example uses `nCores = parallel:detectCores()` and 
 `multiCore = FALSE` to implement the `parallel` package clustering of all 
 available cores. If working in a Windows environment use `multicore = FALSE`. 
-If in a unix-based environment setting `multicore = TRUE` will parallelize 
+If in a UNIX-based environment setting `multicore = TRUE` will parallelize 
 using the `mcapply` package. If you do not want to use all available cores, 
 change the `nCores` variable to the desired number to use.
 
@@ -1264,7 +1264,7 @@ disease process.
 
 ## Heatmap of Significant Genes
 
-In addition to generating individual gene boxplots or volcano plots, we can 
+In addition to generating individual gene box plots or volcano plots, we can 
 again create a heatmap from our data. This time rather than utilizing CV to 
 select genes, we can use the P-value or FDR values to select genes. Here, we 
 plot all genes with an FDR < 0.001.
