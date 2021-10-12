@@ -1329,7 +1329,7 @@ function to such objects. In addition to the `esApply` function defined by the
 to select which expression matrix `elt` you wish to use with the `esApply` 
 function. 
 
-## Links
+## Links & References
 
 GeoMx Background:
 
@@ -1337,6 +1337,8 @@ GeoMx Background:
 * [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/) - 
 Manuscript describing GeoMx Workflow and technology
 * [Data Analysis White Paper for DSP-NGS Assays](https://www.nanostring.com/resources/geomx-cta-data-whitepaper/)
+* [Zimmerman et al. 2021](https://www.biorxiv.org/content/10.1101/2021.09.29.462442v2)
+ - Manuscript describing whole transcriptome assays
 
 Statistics & Packages:
 
@@ -1344,8 +1346,6 @@ Statistics & Packages:
 * [Introduction to ExpressionSets on Bioconductor](https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf)
 * [Lme4 package documentation](https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf)
 * [Benjamini-Hochberg FDR Manuscript](http://www.math.tau.ac.il/~ybenja/MyPapers/benjamini_hochberg1995.pdf)
-
-## References
 
 ## Additional Analysis Methods
 
