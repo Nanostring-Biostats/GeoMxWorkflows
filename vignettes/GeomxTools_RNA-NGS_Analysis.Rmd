@@ -363,7 +363,7 @@ QC_histogram <- function(assay_data = NULL,
         plt <- plt +
             scale_x_continuous(trans = scale_trans)
     }
-    print(plt)
+    plt
 }
 
 ```
