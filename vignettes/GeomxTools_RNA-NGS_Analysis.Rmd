@@ -350,10 +350,7 @@ QC_histogram <- function(assay_data = NULL,
                          annotation = NULL,
                          fill_by = NULL,
                          thr = NULL,
-                         xlims = NULL) {
-    if(is.null(xlims)) {
-        xlims <- range(assay_data[[annotation]])
-    }
+                         scale_trans = NULL) {
     plt <- ggplot(assay_data,
                   aes_string(x = paste0("unlist(`", annotation, "`)"),
                              fill = fill_by)) +
@@ -361,9 +358,12 @@ QC_histogram <- function(assay_data = NULL,
         geom_vline(xintercept = thr, lty = "dashed", color = "black") +
         theme_bw() + guides(fill = "none") +
         facet_wrap(as.formula(paste("~", fill_by)), nrow = 4) +
-        xlim(xlims) +
         labs(x = annotation, y = "Segments, #", title = annotation)
-    plt
+    if(!is.null(scale_trans)) {
+        plt <- plt +
+            scale_x_continuous(trans = scale_trans)
+    }
+    print(plt)
 }
 
 ```
@@ -371,14 +371,13 @@ QC_histogram <- function(assay_data = NULL,
 Now we explore each of the QC metrics for the segments.
 
 ``` {r plotQCHist, warning = FALSE, message = FALSE}
-QC_histogram(sData(demoData), "Trimmed (%)", col_by, 80, c(0,101))
-QC_histogram(sData(demoData), "Stitched (%)", col_by, 80, c(0,101))
-QC_histogram(sData(demoData), "Aligned (%)", col_by, 75, c(0,101))
-QC_histogram(sData(demoData), "Saturated (%)", col_by, 50, c(0,101)) +
+QC_histogram(sData(demoData), "Trimmed (%)", col_by, 80)
+QC_histogram(sData(demoData), "Stitched (%)", col_by, 80)
+QC_histogram(sData(demoData), "Aligned (%)", col_by, 75)
+QC_histogram(sData(demoData), "Saturated (%)", col_by, 50) +
     labs(title = "Sequencing Saturation (%)",
          x = "Sequencing Saturation (%)")
-QC_histogram(sData(demoData), "area", col_by, 1000) +
-    scale_x_continuous(trans = "log10")
+QC_histogram(sData(demoData), "area", col_by, 1000, scale_trans = "log10")
 QC_histogram(sData(demoData), "nuclei", col_by, 20)
 
 # calculate the negative geometric means for each module
@@ -394,8 +393,7 @@ protocolData(demoData)[["NegGeoMean"]] <- negativeGeoMeans
 negCols <- paste0("NegGeoMean_", modules)
 pData(demoData)[, negCols] <- sData(demoData)[["NegGeoMean"]]
 for(ann in negCols) {
-    plt <- QC_histogram(pData(demoData), ann, col_by, 2) +
-        scale_x_continuous(trans = "log10") 
+    plt <- QC_histogram(pData(demoData), ann, col_by, 2, scale_trans = "log10")
     print(plt)
 }
 
@@ -1172,7 +1170,8 @@ ggplot(results,
     scale_y_continuous(expand = expansion(mult = c(0,0.05))) +
     geom_text_repel(data = subset(results, Gene %in% top_g & FDR < 0.001),
                     size = 4, point.padding = 0.15, color = "black",
-                    min.segment.length = .1, box.padding = .2, lwd = 2) +
+                    min.segment.length = .1, box.padding = .2, lwd = 2,
+                    max.overlaps = 50) +
     theme_bw(base_size = 16) +
     theme(legend.position = "bottom") +
     facet_wrap(~Subset, scales = "free_y")
