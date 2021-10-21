@@ -4,7 +4,7 @@ shorttitle: "GeomxTools NGS-RNA Workflow"
 author:
 - name: Jason Reeves
   affiliation: NanoString Technologies, Inc
-- name: Prajan Divaker
+- name: Prajan Divakar
   affiliation: NanoString Technologies, Inc
 - name: Nicole Ortogero
   affiliation: NanoString Technologies, Inc
@@ -27,7 +27,7 @@ abstract: >
     prepare gene-level count data for downstream analysis. To understand our 
     spatial data, we perform unsupervised clustering, dimension reduction, and 
     differential gene expression analyses and visually explore the results.
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "21 October, 2021"
 output: 
     BiocStyle::html_document:
         toc: true

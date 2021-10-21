@@ -1,3 +1,7 @@
+# GeoMxWorkflows 0.99.4
+
+* Updated workflow image
+
 # GeoMxWorkflows 0.99.3
 
 * Removed empty DCC file from example dataset
