@@ -1,3 +1,16 @@
+# GeoMxWorkflows 0.99.4
+
+* Updated workflow image
+
+# GeoMxWorkflows 0.99.3
+
+* Removed empty DCC file from example dataset
+* Adjusted QC plotting histogram function to remove user-defined limits
+
+# GeoMxWorkflows 0.99.2
+
+* Version update for bioconductor build review
+
 # GeoMxWorkflows 0.99.1
 
 NEW FEATURES
