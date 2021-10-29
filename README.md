@@ -22,7 +22,7 @@ Ortogero, N.; Yang, Z.; Vitancol, R.; Griswold, M.; Henderson, D. GeomxTools: Na
 
 ### GeoMxWorkflows
 
-Reeves, J.W.; Divaker, P.; Ortogero, N.; Griswold, M.; Yang, Z.; Zimmerman, S.; Vitancol, R.; and Henderson, D. GeoMxWorkflows: GeoMx Digital Spatial Profiler (DSP) data analysis workflows. R Package Version 1.0.0. 
+Reeves, J.W.; Divakar, P.; Ortogero, N.; Griswold, M.; Yang, Z.; Zimmerman, S.; Vitancol, R.; and Henderson, D. GeoMxWorkflows: GeoMx Digital Spatial Profiler (DSP) data analysis workflows. R Package Version 1.0.0. 
 NanoString Technologies Inc.; Seattle, WA 98109, USA. 2021. 
 
 ## License
