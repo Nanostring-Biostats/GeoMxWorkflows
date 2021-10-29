@@ -1,3 +1,11 @@
+# GeoMxWorkflows 1.1.1
+
+* Bug Fix: Header in vignette, remove self contained exception
+
+# GeoMxWorkflows 1.0.0
+
+* Official release to bioconductor
+
 # GeoMxWorkflows 0.99.4
 
 * Updated workflow image

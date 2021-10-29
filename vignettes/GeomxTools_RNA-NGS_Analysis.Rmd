@@ -32,11 +32,6 @@ output:
     BiocStyle::html_document:
         toc: true
         toc_float: true
-        self_contained: false
-        fig_width: 5
-        fig_height: 4.5
-        mainfont: Arial
-        fontfamily: Arial
 vignette: >
     %\VignetteIndexEntry{Analyzing GeoMx-NGS Data with GeomxTools}
     %\VignetteEncoding{UTF-8}
