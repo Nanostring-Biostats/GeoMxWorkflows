@@ -106,16 +106,31 @@ Our specific objectives:
 Let's install and load the GeoMx packages we need:
 
 ```{r InstallGeomxTools, echo = TRUE, eval = FALSE}
-install.packages("devtools")
-devtools::install_github("Nanostring-Biostats/NanoStringNCTools")
-devtools::install_github("Nanostring-Biostats/GeomxTools", ref = "dev")
-devtools::install_github("Nanostring-Biostats/GeoMxWorkflows", ref = "main")
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes most up to date version of Bioc
+BiocManager::install(version=3.15)
+
+BiocManager::install("NanoStringNCTools")
+BiocManager::install("GeomxTools")
+BiocManager::install("GeoMxWorkflows")
 ```
 
 ```{r libs, message = FALSE, warning = FALSE, eval = TRUE}
 library(NanoStringNCTools)
 library(GeomxTools)
 library(GeoMxWorkflows)
+```
+
+```{r checking package versions, eval = FALSE}
+if(packageVersion("GeomxTools") < "2.1"){
+    stop("Please install the most recent version of GeomxTools")
+    
+    # to remove current package version
+    # remove.packages("GeomxTools")
+    # see install instructions above 
+}
 ```
 
 ## Loading Data
@@ -836,13 +851,13 @@ background normalization is performed by setting `norm_method = "neg"` and
 
 ```{r normalizeObject, eval = TRUE}
 # Q3 norm (75th percentile) for WTA/CTA  with or without custom spike-ins
-target_demoData <- normalize(target_demoData , data_type = "RNA",
+target_demoData <- normalize(target_demoData ,
                              norm_method = "quant", 
                              desiredQuantile = .75,
                              toElt = "q_norm")
 
 # Background normalization for WTA/CTA without custom spike-in
-target_demoData <- normalize(target_demoData , data_type = "RNA",
+target_demoData <- normalize(target_demoData ,
                              norm_method = "neg", 
                              fromElt = "exprs",
                              toElt = "neg_norm")
@@ -1337,6 +1352,7 @@ GeoMx Background:
 * [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/) - 
 Manuscript describing GeoMx Workflow and technology
 * [Data Analysis White Paper for DSP-NGS Assays](https://www.nanostring.com/resources/geomx-cta-data-whitepaper/)
+* [Zimmerman et al., 2022](https://www.biorxiv.org/content/10.1101/2021.09.29.462442v4) - Preprint on Whole Transcriptome Assay on GeoMx
 
 Statistics & Packages:
 
@@ -1344,6 +1360,11 @@ Statistics & Packages:
 * [Introduction to ExpressionSets on Bioconductor](https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf)
 * [Lme4 package documentation](https://cran.r-project.org/web/packages/lme4/vignettes/lmer.pdf)
 * [Benjamini-Hochberg FDR Manuscript](http://www.math.tau.ac.il/~ybenja/MyPapers/benjamini_hochberg1995.pdf)
+
+Other NanoString R packages:
+
+* SpatialDecon - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialDecon.html), [manuscript](https://www.nature.com/articles/s41467-022-28020-5)
+* SpatialOmicsOverlay - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialOmicsOverlay.html)
 
 ## References
 
