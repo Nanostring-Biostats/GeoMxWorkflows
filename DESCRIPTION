@@ -20,7 +20,7 @@ Suggests:
     knitr
 License: MIT
 BiocType: Workflow
-biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow, Spatial
+biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow, SpatialWorkflow
 VignetteEngine: knitr::rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
