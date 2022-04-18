@@ -1,3 +1,11 @@
+# GeoMxWorkflows 1.1.0
+
+* Update GeomxSet object
+
+# GeoMxWorkflows 1.0.0
+
+* Bioconductor initial release
+
 # GeoMxWorkflows 0.99.1
 
 NEW FEATURES

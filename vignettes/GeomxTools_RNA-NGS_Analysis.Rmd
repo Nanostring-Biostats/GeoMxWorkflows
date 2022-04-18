@@ -110,7 +110,7 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 # The following initializes most up to date version of Bioc
-BiocManager::install(version=3.15)
+BiocManager::install(version="3.15")
 
 BiocManager::install("NanoStringNCTools")
 BiocManager::install("GeomxTools")
@@ -123,12 +123,22 @@ library(GeomxTools)
 library(GeoMxWorkflows)
 ```
 
-```{r checking package versions, eval = FALSE}
-if(packageVersion("GeomxTools") < "2.1"){
-    stop("Please install the most recent version of GeomxTools")
+```{r checking package versions}
+if(packageVersion("GeomxTools") < "2.1" & 
+   packageVersion("GeoMxWorkflows") >= "1.0.1"){
+    stop("GeomxTools and Workflow versions do not match. Please use the same version. 
+    This workflow is meant to be used with most current version of packages. 
+    If you are using an older version of Bioconductor please use vignette(GeoMxWorkflows) instead")
+}
+
+if(packageVersion("GeomxTools") > "2.1" & 
+   packageVersion("GeoMxWorkflows") <= "1.0.1"){
+    stop("GeomxTools and Workflow versions do not match. 
+         Please use the same version, see install instructions above.")
     
     # to remove current package version
-    # remove.packages("GeomxTools")
+        # remove.packages("GeomxTools")
+        # remove.packages("GeoMxWorkflows")
     # see install instructions above 
 }
 ```
