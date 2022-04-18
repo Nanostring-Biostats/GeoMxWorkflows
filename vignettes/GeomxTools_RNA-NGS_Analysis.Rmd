@@ -4,7 +4,7 @@ shorttitle: "GeomxTools NGS-RNA Workflow"
 author:
 - name: Jason Reeves
   affiliation: NanoString Technologies, Inc
-- name: Prajan Divaker
+- name: Prajan Divakar
   affiliation: NanoString Technologies, Inc
 - name: Nicole Ortogero
   affiliation: NanoString Technologies, Inc
@@ -27,16 +27,11 @@ abstract: >
     prepare gene-level count data for downstream analysis. To understand our 
     spatial data, we perform unsupervised clustering, dimension reduction, and 
     differential gene expression analyses and visually explore the results.
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "21 October, 2021"
 output: 
     BiocStyle::html_document:
         toc: true
         toc_float: true
-        self_contained: false
-        fig_width: 5
-        fig_height: 4.5
-        mainfont: Arial
-        fontfamily: Arial
 vignette: >
     %\VignetteIndexEntry{Analyzing GeoMx-NGS Data with GeomxTools}
     %\VignetteEncoding{UTF-8}
@@ -375,10 +370,7 @@ QC_histogram <- function(assay_data = NULL,
                          annotation = NULL,
                          fill_by = NULL,
                          thr = NULL,
-                         xlims = NULL) {
-    if(is.null(xlims)) {
-        xlims <- range(assay_data[[annotation]])
-    }
+                         scale_trans = NULL) {
     plt <- ggplot(assay_data,
                   aes_string(x = paste0("unlist(`", annotation, "`)"),
                              fill = fill_by)) +
@@ -386,8 +378,11 @@ QC_histogram <- function(assay_data = NULL,
         geom_vline(xintercept = thr, lty = "dashed", color = "black") +
         theme_bw() + guides(fill = "none") +
         facet_wrap(as.formula(paste("~", fill_by)), nrow = 4) +
-        xlim(xlims) +
         labs(x = annotation, y = "Segments, #", title = annotation)
+    if(!is.null(scale_trans)) {
+        plt <- plt +
+            scale_x_continuous(trans = scale_trans)
+    }
     plt
 }
 
@@ -396,14 +391,13 @@ QC_histogram <- function(assay_data = NULL,
 Now we explore each of the QC metrics for the segments.
 
 ``` {r plotQCHist, warning = FALSE, message = FALSE}
-QC_histogram(sData(demoData), "Trimmed (%)", col_by, 80, c(0,101))
-QC_histogram(sData(demoData), "Stitched (%)", col_by, 80, c(0,101))
-QC_histogram(sData(demoData), "Aligned (%)", col_by, 75, c(0,101))
-QC_histogram(sData(demoData), "Saturated (%)", col_by, 50, c(0,101)) +
+QC_histogram(sData(demoData), "Trimmed (%)", col_by, 80)
+QC_histogram(sData(demoData), "Stitched (%)", col_by, 80)
+QC_histogram(sData(demoData), "Aligned (%)", col_by, 75)
+QC_histogram(sData(demoData), "Saturated (%)", col_by, 50) +
     labs(title = "Sequencing Saturation (%)",
          x = "Sequencing Saturation (%)")
-QC_histogram(sData(demoData), "area", col_by, 1000) +
-    scale_x_continuous(trans = "log10")
+QC_histogram(sData(demoData), "area", col_by, 1000, scale_trans = "log10")
 QC_histogram(sData(demoData), "nuclei", col_by, 20)
 
 # calculate the negative geometric means for each module
@@ -419,8 +413,7 @@ protocolData(demoData)[["NegGeoMean"]] <- negativeGeoMeans
 negCols <- paste0("NegGeoMean_", modules)
 pData(demoData)[, negCols] <- sData(demoData)[["NegGeoMean"]]
 for(ann in negCols) {
-    plt <- QC_histogram(pData(demoData), ann, col_by, 2) +
-        scale_x_continuous(trans = "log10") 
+    plt <- QC_histogram(pData(demoData), ann, col_by, 2, scale_trans = "log10")
     print(plt)
 }
 
@@ -615,7 +608,7 @@ pData(target_demoData)$DetectionThreshold <-
         breaks = c(0, 0.01, 0.05, 0.1, 0.15, 1),
         labels = c("<1%", "1-5%", "5-10%", "10-15%", ">15%"))
 
-# stacked barplot of different cutpoints (1%, 5%, 10%, 15%)
+# stacked bar plot of different cut points (1%, 5%, 10%, 15%)
 ggplot(pData(target_demoData),
        aes(x = DetectionThreshold)) +
     geom_bar(aes(fill = region)) +
@@ -692,7 +685,7 @@ this idea, we create a small gene list (`goi`) to review.
 
 
 ``` {r goi detection}
-library(scales) # for precent
+library(scales) # for percent
 
 # Calculate detection rate:
 LOQ_Mat <- LOQ_Mat[, colnames(target_demoData)]
@@ -873,7 +866,7 @@ target_demoData <- normalize(target_demoData ,
                              toElt = "neg_norm")
 ```
 
-To demonstrate the effects of normalization, we graph representative boxplots 
+To demonstrate the effects of normalization, we graph representative box plots 
 of the data for individual segments before and after normalization.
 
 ```{r normplot, fig.small = TRUE}
@@ -942,7 +935,7 @@ then identify genes with high CVs that should have large differences across
 the various profiled segments. This unbiased approach can reveal highly 
 variable genes across the study. 
 
-We plot the results using unsupervised heirarchical clustering, displayed as a 
+We plot the results using unsupervised hierarchical clustering, displayed as a 
 heatmap.
 
 ``` {r CVheatmap, eval = TRUE, echo = TRUE, fig.width = 8, fig.height = 6.5, fig.wide = TRUE}
@@ -1059,7 +1052,7 @@ for(status in c("DKD", "normal")) {
 Note that the example uses `nCores = parallel:detectCores()` and 
 `multiCore = FALSE` to implement the `parallel` package clustering of all 
 available cores. If working in a Windows environment use `multicore = FALSE`. 
-If in a unix-based environment setting `multicore = TRUE` will parallelize 
+If in a UNIX-based environment setting `multicore = TRUE` will parallelize 
 using the `mcapply` package. If you do not want to use all available cores, 
 change the `nCores` variable to the desired number to use.
 
@@ -1197,7 +1190,8 @@ ggplot(results,
     scale_y_continuous(expand = expansion(mult = c(0,0.05))) +
     geom_text_repel(data = subset(results, Gene %in% top_g & FDR < 0.001),
                     size = 4, point.padding = 0.15, color = "black",
-                    min.segment.length = .1, box.padding = .2, lwd = 2) +
+                    min.segment.length = .1, box.padding = .2, lwd = 2,
+                    max.overlaps = 50) +
     theme_bw(base_size = 16) +
     theme(legend.position = "bottom") +
     facet_wrap(~Subset, scales = "free_y")
@@ -1289,7 +1283,7 @@ disease process.
 
 ## Heatmap of Significant Genes
 
-In addition to generating individual gene boxplots or volcano plots, we can 
+In addition to generating individual gene box plots or volcano plots, we can 
 again create a heatmap from our data. This time rather than utilizing CV to 
 select genes, we can use the P-value or FDR values to select genes. Here, we 
 plot all genes with an FDR < 0.001.
@@ -1354,7 +1348,7 @@ function to such objects. In addition to the `esApply` function defined by the
 to select which expression matrix `elt` you wish to use with the `esApply` 
 function. 
 
-## Links
+## Links & References
 
 GeoMx Background:
 
@@ -1375,8 +1369,6 @@ Other NanoString R packages:
 
 * SpatialDecon - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialDecon.html), [manuscript](https://www.nature.com/articles/s41467-022-28020-5)
 * SpatialOmicsOverlay - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialOmicsOverlay.html)
-
-## References
 
 ## Additional Analysis Methods
 
