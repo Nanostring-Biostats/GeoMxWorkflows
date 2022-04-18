@@ -123,7 +123,7 @@ if(packageVersion("GeomxTools") < "2.1" &
    packageVersion("GeoMxWorkflows") >= "1.0.1"){
     stop("GeomxTools and Workflow versions do not match. Please use the same version. 
     This workflow is meant to be used with most current version of packages. 
-    If you are using an older version of Bioconductor please use vignette(GeoMxWorkflows) instead")
+    If you are using an older version of Bioconductor please reinstall GeoMxWorkflows and use vignette(GeoMxWorkflows) instead")
 }
 
 if(packageVersion("GeomxTools") > "2.1" & 
