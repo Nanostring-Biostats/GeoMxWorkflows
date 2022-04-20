@@ -1,3 +1,7 @@
+# GeoMxWorkflows 1.1.2
+
+* Update install instructions, decrease R version, add links to other packages, ensure compatibility with updated GeomxTools
+
 # GeoMxWorkflows 1.1.1
 
 * Bug Fix: Header in vignette, remove self contained exception

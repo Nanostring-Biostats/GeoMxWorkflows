@@ -1,7 +1,7 @@
 Package: GeoMxWorkflows
 Title: GeoMx Digital Spatial Profiler (DSP) data analysis workflows
 Description: Workflows for use with NanoString Technologies GeoMx Technology.  Package provides bioconductor focused workflows for leveraging existing packages (e.g. GeomxTools) to process, QC, and analyze the data.
-Version: 1.1.1
+Version: 1.1.2
 Encoding: UTF-8
 Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = c("cre", "aut")), 
              person("Prajan", "Divakar", email = "pdivakar@nanostring.com", role = c("aut")),
@@ -11,16 +11,16 @@ Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = 
              person("Stephanie", "Zimmerman", email = "szimmerman@nanostring.com", role = c("aut")),
              person("Rona", "Vitancol", email = "rvitancol@nanostring.com", role = c("aut")),
              person("Henderson", "David", email = "dhenderson@nanostring.com", role = c("aut")))
-Depends: R (>= 4.1), NanoStringNCTools, GeomxTools
+Depends: R (>= 4.0), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
-         methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, ggrepel, ggforce, cowplot,
-         scales, umap, Rtsne, pheatmap, BiocStyle
+         methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, 
+         ggrepel, ggforce, cowplot, scales, umap, Rtsne, pheatmap, BiocStyle
 Suggests: 
     rmarkdown,
     knitr
 License: MIT
 BiocType: Workflow
-biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow
+biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow, SpatialWorkflow
 VignetteEngine: knitr::rmarkdown
 VignetteBuilder: knitr
 RoxygenNote: 7.1.1
