@@ -1,7 +1,7 @@
 Package: GeoMxWorkflows
 Title: GeoMx Digital Spatial Profiler (DSP) data analysis workflows
 Description: Workflows for use with NanoString Technologies GeoMx Technology.  Package provides bioconductor focused workflows for leveraging existing packages (e.g. GeomxTools) to process, QC, and analyze the data.
-Version: 1.2.0
+Version: 1.3.0
 Encoding: UTF-8
 Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = c("cre", "aut")), 
              person("Prajan", "Divakar", email = "pdivakar@nanostring.com", role = c("aut")),
