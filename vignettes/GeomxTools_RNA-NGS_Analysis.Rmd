@@ -1368,7 +1368,7 @@ Statistics & Packages:
 Other NanoString R packages:
 
 * SpatialDecon - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialDecon.html), [manuscript](https://www.nature.com/articles/s41467-022-28020-5)
-* SpatialOmicsOverlay - [Bioconductor](https://bioconductor.org/packages/release/bioc/html/SpatialOmicsOverlay.html)
+* SpatialOmicsOverlay - [GitHub](https://github.com/Nanostring-Biostats/SpatialOmicsOverlay)
 
 ## Additional Analysis Methods
 
