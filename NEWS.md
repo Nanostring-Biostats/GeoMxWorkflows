@@ -1,3 +1,11 @@
+# GeoMxWorkflows 1.2.1
+
+* update links
+
+# GeoMxWorkflows 1.2.0
+
+* Bioconductor 3.15 release
+
 # GeoMxWorkflows 1.1.2
 
 * Update install instructions, decrease R version, add links to other packages, ensure compatibility with updated GeomxTools
