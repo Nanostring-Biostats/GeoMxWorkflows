@@ -1,4 +1,4 @@
-# GeoMxWorkflows 1.2.1
+# GeoMxWorkflows 1.4.0
 
 * update links
 
