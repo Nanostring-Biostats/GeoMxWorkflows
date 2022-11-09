@@ -1,4 +1,8 @@
-# GeoMxWorkflows 1.2.1
+# GeoMxWorkflows 1.5.1
+
+* hot-fix Sankey plot
+
+# GeoMxWorkflows 1.5
 
 * update links
 
