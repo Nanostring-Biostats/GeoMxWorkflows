@@ -105,7 +105,7 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 # The following initializes most up to date version of Bioc
-BiocManager::install(version="3.15")
+BiocManager::install(version="3.16")
 
 BiocManager::install("NanoStringNCTools")
 BiocManager::install("GeomxTools")
@@ -242,8 +242,17 @@ count_mat <- count(pData(demoData), `slide name`, class, region, segment)
 # simplify the slide names
 count_mat$`slide name` <- gsub("disease", "d",
                                gsub("normal", "n", count_mat$`slide name`))
+
 # gather the data and plot in order: class, slide name, region, segment
 test_gr <- gather_set_data(count_mat, 1:4)
+
+# change numeric values to column names
+if(is.numeric(test_gr$x)){
+  for(i in 1:4){
+    test_gr$x[test_gr$x == i] <- colnames(count_mat)[i]
+  }
+}
+
 test_gr$x <- factor(test_gr$x,
                     levels = c("class", "slide name", "region", "segment"))
 # plot Sankey
