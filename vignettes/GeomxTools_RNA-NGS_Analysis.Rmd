@@ -232,7 +232,7 @@ design for our dataset to look at the different types of samples and ROI/AOI
 segments that have been profiled. We present this information in an Alluvial 
 diagram.
 
-```{r sampleFlowAlluvial, fig.width=10, fig.height=8, fig.wide = TRUE, message=FALSE, warning=FALSE}
+``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
 library(dplyr)
 library(easyalluvial)
 library(ggforce)
