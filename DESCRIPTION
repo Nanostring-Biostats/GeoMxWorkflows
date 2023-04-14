@@ -14,7 +14,8 @@ Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = 
 Depends: R (>= 4.0), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
          methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, 
-         ggrepel, ggforce, cowplot, scales, umap, Rtsne, pheatmap, BiocStyle
+         ggrepel, ggforce, cowplot, scales, umap, Rtsne, pheatmap, BiocStyle,
+         parcats, easyalluvial
 Suggests: 
     rmarkdown,
     knitr
