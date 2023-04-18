@@ -105,7 +105,7 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 # The following initializes most up to date version of Bioc
-BiocManager::install(version="3.15")
+BiocManager::install()
 
 BiocManager::install("NanoStringNCTools")
 BiocManager::install("GeomxTools")
@@ -168,12 +168,11 @@ We first locate the downloaded files:
 ```{r quickstart, message = FALSE, warning = FALSE}
 # Reference the main folder 'file.path' containing the sub-folders with each
 # data file type:
-datadir <- system.file("inst", "extdata", "WTA_NGS_Example",
+datadir <- system.file("extdata", "WTA_NGS_Example",
                        package="GeoMxWorkflows")
 # to locate a specific file path replace the above line with
 # datadir <- file.path("~/Folder/SubFolder/DataLocation")
 # replace the Folder, SubFolder, DataLocation as needed
-
 # the DataLocation folder should contain a dccs, pkcs, and annotation folder
 # with each set of files present as needed
 ```
@@ -232,7 +231,7 @@ design for our dataset to look at the different types of samples and ROI/AOI
 segments that have been profiled. We present this information in an Alluvial 
 diagram.
 
-``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
+``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 4, fig.wide = TRUE, message = FALSE, warning = FALSE}
 library(dplyr)
 library(easyalluvial)
 library(ggforce)
@@ -256,8 +255,7 @@ pc <- parcats(p,
         data_input = sampleOverview,
         labelfont = list(size = 12, color = "black"),
         hoveron="dimension",
-        hoverinfo = "count",
-        offset_marginal_histograms = 0.7)
+        hoverinfo = "count")
 pc
 ```
 
@@ -643,7 +641,7 @@ Let's re-plot the Alluvial diagram showing our current working dataset. This is
 now a dataset that no longer contains segments flagged by Segment QC or that 
 have low gene detection rates.
 
-``` {r replotAlluvial, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
+``` {r replotAlluvial, fig.width = 10, fig.height = 4, fig.wide = TRUE, message = FALSE, warning = FALSE}
 
 sampleOverviewFiltered <- pData(target_demoData)[factors_of_interest]
 
@@ -658,11 +656,10 @@ p <- easyalluvial::alluvial_wide(sampleOverviewFiltered,
 # Add hover option details to plot
 pc <- parcats(p,
         marginal_histograms = FALSE,
-        data_input = sampleOverview,
+        data_input = sampleOverviewFiltered,
         labelfont = list(size = 12, color = "black"),
         hoveron="dimension",
-        hoverinfo = "count",
-        offset_marginal_histograms = 0.7)
+        hoverinfo = "count")
 pc
 ```
 
