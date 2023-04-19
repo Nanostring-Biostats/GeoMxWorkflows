@@ -231,7 +231,7 @@ design for our dataset to look at the different types of samples and ROI/AOI
 segments that have been profiled. We present this information in an Alluvial 
 diagram.
 
-``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 4, fig.wide = TRUE, message = FALSE, warning = FALSE}
+``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 3, message = FALSE, warning = FALSE}
 library(dplyr)
 library(easyalluvial)
 library(ggforce)
@@ -641,7 +641,7 @@ Let's re-plot the Alluvial diagram showing our current working dataset. This is
 now a dataset that no longer contains segments flagged by Segment QC or that 
 have low gene detection rates.
 
-``` {r replotAlluvial, fig.width = 10, fig.height = 4, fig.wide = TRUE, message = FALSE, warning = FALSE}
+``` {r replotAlluvial, fig.width = 10, fig.height = 3, message = FALSE, warning = FALSE}
 
 sampleOverviewFiltered <- pData(target_demoData)[factors_of_interest]
 
