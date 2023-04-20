@@ -1221,8 +1221,8 @@ Let's look at the distribution across tissue structures for PDHA1.
 # show expression for a single target: PDHA1
 ggplot(pData(target_demoData),
        aes(x = region, fill = region,
-           y = assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm"))) +
+           y = as.numeric(assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm")))) +
     geom_violin() +
     geom_jitter(width = .2) +
     labs(y = "PDHA1 Expression") +
@@ -1242,10 +1242,10 @@ glom <- pData(target_demoData)$region == "glomerulus"
 
 # show expression of PDHA1 vs ITGB1
 ggplot(pData(target_demoData),
-       aes(x = assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm"),
-           y = assayDataElement(target_demoData["ITGB1", ],
-                                elt = "q_norm"),
+       aes(x = as.numeric(assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm")),
+           y = as.numeric(assayDataElement(target_demoData["ITGB1", ],
+                                elt = "q_norm")),
            color = region)) +
     geom_vline(xintercept =
                    max(assayDataElement(target_demoData["PDHA1", glom],
