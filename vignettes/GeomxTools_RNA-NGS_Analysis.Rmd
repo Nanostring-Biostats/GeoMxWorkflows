@@ -105,7 +105,7 @@ if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 
 # The following initializes most up to date version of Bioc
-BiocManager::install(version="LATEST.VERSION")
+BiocManager::install()
 
 BiocManager::install("NanoStringNCTools")
 BiocManager::install("GeomxTools")
