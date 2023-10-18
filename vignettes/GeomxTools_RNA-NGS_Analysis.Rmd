@@ -173,6 +173,7 @@ datadir <- system.file("extdata", "WTA_NGS_Example",
 # to locate a specific file path replace the above line with
 # datadir <- file.path("~/Folder/SubFolder/DataLocation")
 # replace the Folder, SubFolder, DataLocation as needed
+
 # the DataLocation folder should contain a dccs, pkcs, and annotation folder
 # with each set of files present as needed
 ```
@@ -228,37 +229,41 @@ kable(data.frame(PKCs = pkcs, modules = modules))
 
 Now that we have loaded the data, we can visually summarize the experimental 
 design for our dataset to look at the different types of samples and ROI/AOI 
-segments that have been profiled. We present this information in an Alluvial 
+segments that have been profiled. We present this information in a Sankey 
 diagram.
 
-``` {r sampleFlowAlluvial, fig.width = 10, fig.height = 3, message = FALSE, warning = FALSE}
+``` {r sampleFlow, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
 library(dplyr)
-library(easyalluvial)
 library(ggforce)
-library(parcats)
 
-# Calculate distribution
-factors_of_interest <- c("slide name", "class", "region", "segment")
-sampleOverview <- pData(demoData)[factors_of_interest]
-
-# Simplify the slide names
-sampleOverview$`slide name` <- gsub("disease", "d",
-                               gsub("normal", "n", sampleOverview$`slide name`))
-
-# Create alluvial plot
-p <- easyalluvial::alluvial_wide(sampleOverview, 
-                                 max_variables = 15)
-
-# Add hover option details to plot
-pc <- parcats(p,
-        marginal_histograms = FALSE,
-        data_input = sampleOverview,
-        labelfont = list(size = 12, color = "black"),
-        hoveron="dimension",
-        hoverinfo = "count")
-pc
+# select the annotations we want to show, use `` to surround column names with
+# spaces or special symbols
+count_mat <- count(pData(demoData), `slide name`, class, region, segment)
+# simplify the slide names
+count_mat$`slide name` <- gsub("disease", "d",
+                               gsub("normal", "n", count_mat$`slide name`))
+# gather the data and plot in order: class, slide name, region, segment
+test_gr <- gather_set_data(count_mat, 1:4)
+test_gr$x <- factor(test_gr$x,
+                    levels = c("class", "slide name", "region", "segment"))
+# plot Sankey
+ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
+    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
+    geom_parallel_sets_axes(axis.width = 0.2) +
+    geom_parallel_sets_labels(color = "white", size = 5) +
+    theme_classic(base_size = 17) + 
+    theme(legend.position = "bottom",
+          axis.ticks.y = element_blank(),
+          axis.line = element_blank(),
+          axis.text.y = element_blank()) +
+    scale_y_continuous(expand = expansion(0)) + 
+    scale_x_discrete(expand = expansion(0)) +
+    labs(x = "", y = "") +
+    annotate(geom = "segment", x = 4.25, xend = 4.25,
+             y = 20, yend = 120, lwd = 2) +
+    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
+             hjust = 0.5, label = "100 segments")
 ```
-
 
 # QC & Pre-processing
 
@@ -637,30 +642,40 @@ target_demoData <-
 dim(target_demoData)
 ```
 
-Let's re-plot the Alluvial diagram showing our current working dataset. This is 
+Let's re-plot the Sankey diagram showing our current working dataset. This is 
 now a dataset that no longer contains segments flagged by Segment QC or that 
 have low gene detection rates.
 
-``` {r replotAlluvial, fig.width = 10, fig.height = 3, message = FALSE, warning = FALSE}
-
-sampleOverviewFiltered <- pData(target_demoData)[factors_of_interest]
-
-# Simplify the slide names
-sampleOverviewFiltered$`slide name` <- gsub("disease", "d",
-                               gsub("normal", "n", sampleOverviewFiltered$`slide name`))
-
-# Create alluvial plot
-p <- easyalluvial::alluvial_wide(sampleOverviewFiltered, 
-                                 max_variables = 15)
-
-# Add hover option details to plot
-pc <- parcats(p,
-        marginal_histograms = FALSE,
-        data_input = sampleOverviewFiltered,
-        labelfont = list(size = 12, color = "black"),
-        hoveron="dimension",
-        hoverinfo = "count")
-pc
+``` {r replotSankey, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
+# select the annotations we want to show, use `` to surround column names with
+# spaces or special symbols
+count_mat <- count(pData(demoData), `slide name`, class, region, segment)
+# simplify the slide names
+count_mat$`slide name` <- 
+    gsub("disease", "d",
+         gsub("normal", "n", count_mat$`slide name`))
+# gather the data and plot in order: class, slide name, region, segment
+test_gr <- gather_set_data(count_mat, 1:4)
+test_gr$x <-
+    factor(test_gr$x,
+           levels = c("class", "slide name", "region", "segment"))
+# plot Sankey
+ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
+    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
+    geom_parallel_sets_axes(axis.width = 0.2) +
+    geom_parallel_sets_labels(color = "white", size = 5) +
+    theme_classic(base_size = 17) + 
+    theme(legend.position = "bottom",
+          axis.ticks.y = element_blank(),
+          axis.line = element_blank(),
+          axis.text.y = element_blank()) +
+    scale_y_continuous(expand = expansion(0)) + 
+    scale_x_discrete(expand = expansion(0)) +
+    labs(x = "", y = "") +
+    annotate(geom = "segment", x = 4.25, xend = 4.25, y = 20, 
+             yend = 120, lwd = 2) +
+    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
+             hjust = 0.5, label = "100 segments")
 ```
 
 ### Gene Detection Rate
@@ -1221,8 +1236,8 @@ Let's look at the distribution across tissue structures for PDHA1.
 # show expression for a single target: PDHA1
 ggplot(pData(target_demoData),
        aes(x = region, fill = region,
-           y = as.numeric(assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm")))) +
+           y = assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm"))) +
     geom_violin() +
     geom_jitter(width = .2) +
     labs(y = "PDHA1 Expression") +
@@ -1242,10 +1257,10 @@ glom <- pData(target_demoData)$region == "glomerulus"
 
 # show expression of PDHA1 vs ITGB1
 ggplot(pData(target_demoData),
-       aes(x = as.numeric(assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm")),
-           y = as.numeric(assayDataElement(target_demoData["ITGB1", ],
-                                elt = "q_norm")),
+       aes(x = assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm"),
+           y = assayDataElement(target_demoData["ITGB1", ],
+                                elt = "q_norm"),
            color = region)) +
     geom_vline(xintercept =
                    max(assayDataElement(target_demoData["PDHA1", glom],
