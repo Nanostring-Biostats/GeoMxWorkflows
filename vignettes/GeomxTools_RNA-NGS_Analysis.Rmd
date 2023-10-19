@@ -232,37 +232,32 @@ design for our dataset to look at the different types of samples and ROI/AOI
 segments that have been profiled. We present this information in a Sankey 
 diagram.
 
-``` {r sampleFlow, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
+``` {r sampleFlow, message = FALSE, warning = FALSE}
 library(dplyr)
 library(ggforce)
+library(networkD3)
 
-# select the annotations we want to show, use `` to surround column names with
-# spaces or special symbols
-count_mat <- count(pData(demoData), `slide name`, class, region, segment)
-# simplify the slide names
-count_mat$`slide name` <- gsub("disease", "d",
-                               gsub("normal", "n", count_mat$`slide name`))
-# gather the data and plot in order: class, slide name, region, segment
-test_gr <- gather_set_data(count_mat, 1:4)
-test_gr$x <- factor(test_gr$x,
-                    levels = c("class", "slide name", "region", "segment"))
-# plot Sankey
-ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
-    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
-    geom_parallel_sets_axes(axis.width = 0.2) +
-    geom_parallel_sets_labels(color = "white", size = 5) +
-    theme_classic(base_size = 17) + 
-    theme(legend.position = "bottom",
-          axis.ticks.y = element_blank(),
-          axis.line = element_blank(),
-          axis.text.y = element_blank()) +
-    scale_y_continuous(expand = expansion(0)) + 
-    scale_x_discrete(expand = expansion(0)) +
-    labs(x = "", y = "") +
-    annotate(geom = "segment", x = 4.25, xend = 4.25,
-             y = 20, yend = 120, lwd = 2) +
-    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
-             hjust = 0.5, label = "100 segments")
+sankeyCols <- c("source", "target", "value")
+
+link1 <- count(pData(demoData), `slide name`, class)
+link2 <- count(pData(demoData),  class, region)
+link3 <- count(pData(demoData),  region, segment)
+
+colnames(link1) <- sankeyCols
+colnames(link2) <- sankeyCols
+colnames(link3) <- sankeyCols
+
+links <- rbind(link1,link2,link3)
+nodes <- unique(data.frame(name=c(links$source, links$target)))
+
+# sankeyNetwork is 0 based, not 1 based
+links$source <- as.integer(match(links$source,nodes$name)-1)
+links$target <- as.integer(match(links$target,nodes$name)-1)
+
+
+sankeyNetwork(Links = links, Nodes = nodes, Source = "source",
+              Target = "target", Value = "value", NodeID = "name",
+              units = "TWh", fontSize = 12, nodeWidth = 30)
 ```
 
 # QC & Pre-processing
@@ -642,42 +637,6 @@ target_demoData <-
 dim(target_demoData)
 ```
 
-Let's re-plot the Sankey diagram showing our current working dataset. This is 
-now a dataset that no longer contains segments flagged by Segment QC or that 
-have low gene detection rates.
-
-``` {r replotSankey, fig.width = 10, fig.height = 8, fig.wide = TRUE, message = FALSE, warning = FALSE}
-# select the annotations we want to show, use `` to surround column names with
-# spaces or special symbols
-count_mat <- count(pData(demoData), `slide name`, class, region, segment)
-# simplify the slide names
-count_mat$`slide name` <- 
-    gsub("disease", "d",
-         gsub("normal", "n", count_mat$`slide name`))
-# gather the data and plot in order: class, slide name, region, segment
-test_gr <- gather_set_data(count_mat, 1:4)
-test_gr$x <-
-    factor(test_gr$x,
-           levels = c("class", "slide name", "region", "segment"))
-# plot Sankey
-ggplot(test_gr, aes(x, id = id, split = y, value = n)) +
-    geom_parallel_sets(aes(fill = region), alpha = 0.5, axis.width = 0.1) +
-    geom_parallel_sets_axes(axis.width = 0.2) +
-    geom_parallel_sets_labels(color = "white", size = 5) +
-    theme_classic(base_size = 17) + 
-    theme(legend.position = "bottom",
-          axis.ticks.y = element_blank(),
-          axis.line = element_blank(),
-          axis.text.y = element_blank()) +
-    scale_y_continuous(expand = expansion(0)) + 
-    scale_x_discrete(expand = expansion(0)) +
-    labs(x = "", y = "") +
-    annotate(geom = "segment", x = 4.25, xend = 4.25, y = 20, 
-             yend = 120, lwd = 2) +
-    annotate(geom = "text", x = 4.19, y = 70, angle = 90, size = 5,
-             hjust = 0.5, label = "100 segments")
-```
-
 ### Gene Detection Rate
 
 Next, we determine the detection rate for genes across the study. To illustrate 
@@ -968,22 +927,22 @@ pheatmap(assayDataElement(target_demoData[GOI, ], elt = "log_q"),
 
 # Differential Expression
 
-A central method for exploring differences between groups of segments or 
-samples is to perform differential gene expression analysis. A common 
-statistical approach is to use a linear mixed-effect model (LMM). The LMM 
-allows the user to account for the subsampling per tissue; in other words, we 
-adjust for the fact that the multiple regions of interest placed per tissue 
-section are not independent observations, as is the assumption with other 
-traditional statistical tests. The formulation of the LMM model depends on the 
+A central method for exploring differences between groups of segments or
+samples is to perform differential gene expression analysis. A common
+statistical approach is to use a linear mixed-effect model (LMM). The LMM
+allows the user to account for the subsampling per tissue; in other words, we
+adjust for the fact that the multiple regions of interest placed per tissue
+section are not independent observations, as is the assumption with other
+traditional statistical tests. The formulation of the LMM model depends on the
 scientific question being asked.
 
-Overall, there are two flavors of the LMM model when used with GeoMx data: i) 
-with and ii) without random slope. 
+Overall, there are two flavors of the LMM model when used with GeoMx data: i)
+with and ii) without random slope.
 
-When comparing features that co-exist in a given tissue section (e.g. glomeruli 
-vs tubules in DKD kidneys), a random slope is included in the LMM model. When 
-comparing features that are mutually exclusive in a given tissue section 
-(healthy glomeruli versus DKD glomeruli) the LMM model does not require a 
+When comparing features that co-exist in a given tissue section (e.g. glomeruli
+vs tubules in DKD kidneys), a random slope is included in the LMM model. When
+comparing features that are mutually exclusive in a given tissue section
+(healthy glomeruli versus DKD glomeruli) the LMM model does not require a
 random slope. We represent the two variations on the LMM in the schematic below:
 
 ![](./Images/GeomxDETypes.png)
@@ -992,26 +951,26 @@ For more details on the LMM, please refer to the [lme4 package](https://cran.r-p
 
 ## Within Slide Analysis: Glomeruli vs Tubules
 
-One informative exploration is to study differences between morphological 
-structures. In this example, we can study differential expression between 
-glomeruli and tubules. We will focus on the diseased kidney tissues. Because we 
-are comparing structures that co-exist within the a given tissue we will use 
-the LMM model with a random slope. Morphological structure (`Region`) is our 
-test variable. We control for tissue subsampling with `slide name` using a 
-random slope and intercept; the intercept adjusts for the multiple regions 
-placed per unique tissue, since we have one tissue per slide. If multiple 
-tissues are placed per slide, we would change the intercept variable to the 
+One informative exploration is to study differences between morphological
+structures. In this example, we can study differential expression between
+glomeruli and tubules. We will focus on the diseased kidney tissues. Because we
+are comparing structures that co-exist within the a given tissue we will use
+the LMM model with a random slope. Morphological structure (`Region`) is our
+test variable. We control for tissue subsampling with `slide name` using a
+random slope and intercept; the intercept adjusts for the multiple regions
+placed per unique tissue, since we have one tissue per slide. If multiple
+tissues are placed per slide, we would change the intercept variable to the
 unique tissue name (ex: tissue name, Block ID, etc).
 
-In this analysis we save log~2~ fold change estimates and P-values across all 
-levels in the factor of interest. We also apply a Benjamini-Hochberg multiple 
+In this analysis we save log~2~ fold change estimates and P-values across all
+levels in the factor of interest. We also apply a Benjamini-Hochberg multiple
 test correction.
 
 ``` {r deNativeComplex, eval = TRUE, message = FALSE, warning = FALSE}
 # convert test variables to factors
-pData(target_demoData)$testRegion <- 
+pData(target_demoData)$testRegion <-
     factor(pData(target_demoData)$region, c("glomerulus", "tubule"))
-pData(target_demoData)[["slide"]] <- 
+pData(target_demoData)[["slide"]] <-
     factor(pData(target_demoData)[["slide name"]])
 assayDataElement(object = target_demoData, elt = "log_q") <-
     assayDataApply(target_demoData, 2, FUN = log, base = 2, elt = "q_norm")
@@ -1028,44 +987,44 @@ for(status in c("DKD", "normal")) {
                      groupVar = "testRegion",
                      nCores = parallel::detectCores(),
                      multiCore = FALSE)
-    
+
     # format results as data.frame
     r_test <- do.call(rbind, mixedOutmc["lsmeans", ])
     tests <- rownames(r_test)
     r_test <- as.data.frame(r_test)
     r_test$Contrast <- tests
-    
+
     # use lapply in case you have multiple levels of your test factor to
     # correctly associate gene name with it's row in the results table
-    r_test$Gene <- 
+    r_test$Gene <-
         unlist(lapply(colnames(mixedOutmc),
                       rep, nrow(mixedOutmc["lsmeans", ][[1]])))
     r_test$Subset <- status
     r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
-    r_test <- r_test[, c("Gene", "Subset", "Contrast", "Estimate", 
+    r_test <- r_test[, c("Gene", "Subset", "Contrast", "Estimate",
                          "Pr(>|t|)", "FDR")]
     results <- rbind(results, r_test)
 }
 
 ```
 
-Note that the example uses `nCores = parallel:detectCores()` and 
-`multiCore = FALSE` to implement the `parallel` package clustering of all 
-available cores. If working in a Windows environment use `multicore = FALSE`. 
-If in a UNIX-based environment setting `multicore = TRUE` will parallelize 
-using the `mcapply` package. If you do not want to use all available cores, 
+Note that the example uses `nCores = parallel:detectCores()` and
+`multiCore = FALSE` to implement the `parallel` package clustering of all
+available cores. If working in a Windows environment use `multicore = FALSE`.
+If in a UNIX-based environment setting `multicore = TRUE` will parallelize
+using the `mcapply` package. If you do not want to use all available cores,
 change the `nCores` variable to the desired number to use.
 
 ## Interpreting the results table
 
-Let's review the results from the analysis of glomeruli to tubules in 
-healthy (normal) patients. We saved the LMM outputs into a table (`results`) 
-containing three of the key features for differential expression: the log~2~ 
-fold change value (`Estimate`), P-value (`Pr(>|t|)`), and false-discovery 
-adjusted P-values (`FDR`). Let's take a look at a few genes of interest. The 
-contrast column is used to interpret the log~2~ fold change value as it 
-specifies which levels are compared (e.g. positive fold change values when 
-comparing `glomerulus - tubule` indicates an enrichment in the glomerulus; 
+Let's review the results from the analysis of glomeruli to tubules in
+healthy (normal) patients. We saved the LMM outputs into a table (`results`)
+containing three of the key features for differential expression: the log~2~
+fold change value (`Estimate`), P-value (`Pr(>|t|)`), and false-discovery
+adjusted P-values (`FDR`). Let's take a look at a few genes of interest. The
+contrast column is used to interpret the log~2~ fold change value as it
+specifies which levels are compared (e.g. positive fold change values when
+comparing `glomerulus - tubule` indicates an enrichment in the glomerulus;
 negative indicates enrichment in tubules).
 
 We can display these results by subsetting the results table.
@@ -1078,11 +1037,11 @@ kable(subset(results, Gene %in% goi & Subset == "normal"), digits = 3,
 
 ## Between Slide Analysis: Diabetic Kidney Disease vs Healthy
 
-Another informative exploration is to compare tissue cohorts. In this case, we 
-would like to compare diseased versus healthy kidneys. We will focus on 
-glomeruli as our structure. Because we are comparing disease status, which is 
-specific to the entire kidney, we will use the LMM model without a random 
-slope. Disease (`testClass`) is our test variable. Like our previous LMM 
+Another informative exploration is to compare tissue cohorts. In this case, we
+would like to compare diseased versus healthy kidneys. We will focus on
+glomeruli as our structure. Because we are comparing disease status, which is
+specific to the entire kidney, we will use the LMM model without a random
+slope. Disease (`testClass`) is our test variable. Like our previous LMM
 example, we control for tissue subsampling with `slide name` as the intercept.
 
 ``` {r DEsimple, eval = TRUE, echo = TRUE, message = FALSE, warning = FALSE}
@@ -1102,28 +1061,28 @@ for(region in c("glomerulus", "tubule")) {
                      groupVar = "testClass",
                      nCores = parallel::detectCores(),
                      multiCore = FALSE)
-    
+
     # format results as data.frame
     r_test <- do.call(rbind, mixedOutmc["lsmeans", ])
     tests <- rownames(r_test)
     r_test <- as.data.frame(r_test)
     r_test$Contrast <- tests
-    
+
     # use lapply in case you have multiple levels of your test factor to
     # correctly associate gene name with it's row in the results table
-    r_test$Gene <- 
+    r_test$Gene <-
         unlist(lapply(colnames(mixedOutmc),
                       rep, nrow(mixedOutmc["lsmeans", ][[1]])))
     r_test$Subset <- region
     r_test$FDR <- p.adjust(r_test$`Pr(>|t|)`, method = "fdr")
-    r_test <- r_test[, c("Gene", "Subset", "Contrast", "Estimate", 
+    r_test <- r_test[, c("Gene", "Subset", "Contrast", "Estimate",
                          "Pr(>|t|)", "FDR")]
     results2 <- rbind(results2, r_test)
 }
 
 ```
 
-We can review our genes of interest for this comparison as well. Let's focus on 
+We can review our genes of interest for this comparison as well. Let's focus on
 results from analysis of tubules.
 
 ``` {r DEtable2, echo = TRUE, results = "asis"}
@@ -1140,13 +1099,13 @@ kable(subset(results2, Gene %in% goi & Subset == "tubule"), digits = 3,
 
 ## Volcano Plots
 
-A canonical visualization for interpreting differential gene expression results 
+A canonical visualization for interpreting differential gene expression results
 is the volcano plot.
-Let's look at the LMM results from our diseased glomeruli versus tubules 
+Let's look at the LMM results from our diseased glomeruli versus tubules
 comparison.
 
 ``` {r volcanoPlot, fig.width = 11, fig.height = 7, fig.wide = TRUE, warning = FALSE, message = FALSE}
-library(ggrepel) 
+library(ggrepel)
 # Categorize Results based on P-value & FDR for plotting
 results$Color <- "NS or FC < 0.5"
 results$Color[results$`Pr(>|t|)` < 0.05] <- "P < 0.05"
@@ -1197,28 +1156,28 @@ ggplot(results,
     facet_wrap(~Subset, scales = "free_y")
 ```
 
-The volcano plot shows several genes that are significantly differentially 
-expressed between glomeruli and tubules, though some are specific to the 
-disease status of the sample. Note that because we use the linear mixed effect 
-model to account for tissue specific variation, the volcano plot shape may look 
-less typical than one generated with a linear regression model. There are some 
-genes for which we see high fold change, but lower significance, because these 
-genes appear to be behaving in a sample-specific manner rather than 
+The volcano plot shows several genes that are significantly differentially
+expressed between glomeruli and tubules, though some are specific to the
+disease status of the sample. Note that because we use the linear mixed effect
+model to account for tissue specific variation, the volcano plot shape may look
+less typical than one generated with a linear regression model. There are some
+genes for which we see high fold change, but lower significance, because these
+genes appear to be behaving in a sample-specific manner rather than
 consistently across all kidney samples.
 
-In the next section, we will explore the expression of select gene targets to 
+In the next section, we will explore the expression of select gene targets to
 demonstrate their dynamics.
 
 ## Plotting Genes of Interest
 
-A simple and effective plot to view individual genes is the violin plot. This 
-visualization reveals both the dynamic range and shape of the distribution for 
-a gene target. We selected a few genes for which we validated 
-structure-specific expression from the 
-[Human Protein Atlas](https://www.proteinatlas.org). We will plot a gene 
-enriched within the glomeruli, 
-[ITGB1](https://www.proteinatlas.org/ENSG00000150093-ITGB1/tissue/kidney) and a 
-gene enriched within tubules, 
+A simple and effective plot to view individual genes is the violin plot. This
+visualization reveals both the dynamic range and shape of the distribution for
+a gene target. We selected a few genes for which we validated
+structure-specific expression from the
+[Human Protein Atlas](https://www.proteinatlas.org). We will plot a gene
+enriched within the glomeruli,
+[ITGB1](https://www.proteinatlas.org/ENSG00000150093-ITGB1/tissue/kidney) and a
+gene enriched within tubules,
 [PDHA1](https://www.proteinatlas.org/ENSG00000131828-PDHA1/tissue/kidney).
 
 First let's review the model results for these targets:
@@ -1227,7 +1186,7 @@ First let's review the model results for these targets:
 kable(subset(results, Gene %in% c('PDHA1','ITGB1')), row.names = FALSE)
 ```
 
-Here we see that while these genes are significantly enriched in a structure, 
+Here we see that while these genes are significantly enriched in a structure,
 the structure-specific expression is also specific to the healthy tissue.
 
 Let's look at the distribution across tissue structures for PDHA1.
@@ -1236,8 +1195,8 @@ Let's look at the distribution across tissue structures for PDHA1.
 # show expression for a single target: PDHA1
 ggplot(pData(target_demoData),
        aes(x = region, fill = region,
-           y = assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm"))) +
+           y = as.numeric(assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm")))) +
     geom_violin() +
     geom_jitter(width = .2) +
     labs(y = "PDHA1 Expression") +
@@ -1246,10 +1205,10 @@ ggplot(pData(target_demoData),
     theme_bw()
 ```
 
-Now we can plot these two targets against each other to show the mutually 
-exclusive expression pattern that can be used to easily distinguish the two 
-structures. The dashed vertical line represents the maximum observed PDHA1 
-expression in glomeruli and the horizontal line represents the maximum observed 
+Now we can plot these two targets against each other to show the mutually
+exclusive expression pattern that can be used to easily distinguish the two
+structures. The dashed vertical line represents the maximum observed PDHA1
+expression in glomeruli and the horizontal line represents the maximum observed
 ITGB1 expression in the tubules.
 
 ``` {r targetExprs2, fig.width = 8, fig.wide = TRUE, eval = TRUE}
@@ -1257,10 +1216,10 @@ glom <- pData(target_demoData)$region == "glomerulus"
 
 # show expression of PDHA1 vs ITGB1
 ggplot(pData(target_demoData),
-       aes(x = assayDataElement(target_demoData["PDHA1", ],
-                                elt = "q_norm"),
-           y = assayDataElement(target_demoData["ITGB1", ],
-                                elt = "q_norm"),
+       aes(x = as.numeric(assayDataElement(target_demoData["PDHA1", ],
+                                elt = "q_norm")),
+           y = as.numeric(assayDataElement(target_demoData["ITGB1", ],
+                                elt = "q_norm")),
            color = region)) +
     geom_vline(xintercept =
                    max(assayDataElement(target_demoData["PDHA1", glom],
@@ -1272,27 +1231,27 @@ ggplot(pData(target_demoData),
                lty = "dashed", col = "darkgray") +
     geom_point(size = 3) +
     theme_bw() +
-    scale_x_continuous(trans = "log2") + 
+    scale_x_continuous(trans = "log2") +
     scale_y_continuous(trans = "log2") +
     labs(x = "PDHA1 Expression", y = "ITGB1 Expression") +
     facet_wrap(~class)
 ```
 
-These results suggest both of these genes become less specific during the 
+These results suggest both of these genes become less specific during the
 disease process.
 
 ## Heatmap of Significant Genes
 
-In addition to generating individual gene box plots or volcano plots, we can 
-again create a heatmap from our data. This time rather than utilizing CV to 
-select genes, we can use the P-value or FDR values to select genes. Here, we 
+In addition to generating individual gene box plots or volcano plots, we can
+again create a heatmap from our data. This time rather than utilizing CV to
+select genes, we can use the P-value or FDR values to select genes. Here, we
 plot all genes with an FDR < 0.001.
 
 ``` {r heatmap, eval = TRUE, fig.width = 8, fig.height = 6.5, fig.wide = TRUE}
 # select top significant genes based on significance, plot with pheatmap
 GOI <- unique(subset(results, `FDR` < 0.001)$Gene)
 pheatmap(log2(assayDataElement(target_demoData[GOI, ], elt = "q_norm")),
-         scale = "row", 
+         scale = "row",
          show_rownames = FALSE, show_colnames = FALSE,
          border_color = NA,
          clustering_method = "average",
@@ -1306,22 +1265,22 @@ pheatmap(log2(assayDataElement(target_demoData[GOI, ], elt = "q_norm")),
 
 # Additional Resources
 
-While this vignette has focused on the full data analysis workflow, we have 
-created additional vignettes to describe in detail the functionalaties and 
-tools built into the `GeomxTools` package that more advanced users may be 
-interested in. Please see the 
+While this vignette has focused on the full data analysis workflow, we have
+created additional vignettes to describe in detail the functionalaties and
+tools built into the `GeomxTools` package that more advanced users may be
+interested in. Please see the
 [GeomxTools Vignette](https://bioconductor.org/packages/release/bioc/vignettes/GeomxTools/inst/doc/Introduction.html)
 for more detailed information on all `GeomxTools` documentation.
 
 ## GeoMxSet Object Overview
 
-In the section 'Loading the Demo Data', we see that the `demoData` object is 
-stored as a `GeoMxSet Object`. `GeoMxSet` objects are based on `ExpressionSet` 
-objects, and have many similar functions as those described 
-[on Bioconductor](https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf). 
-All expression, annotation, and probe information are linked and stored 
-together as shown in the schematic below. There are a few key ways to access 
-the data after we create a GeoMxSet Object. We use these throughout the 
+In the section 'Loading the Demo Data', we see that the `demoData` object is
+stored as a `GeoMxSet Object`. `GeoMxSet` objects are based on `ExpressionSet`
+objects, and have many similar functions as those described
+[on Bioconductor](https://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf).
+All expression, annotation, and probe information are linked and stored
+together as shown in the schematic below. There are a few key ways to access
+the data after we create a GeoMxSet Object. We use these throughout the
 vignette.
 
 <center>
@@ -1332,28 +1291,28 @@ vignette.
 
 As is shown above the GeoMxSet object consists of 3 or more elements.
 
-* Expression count matrices - accessed with `exprs(object)` to return the 
+* Expression count matrices - accessed with `exprs(object)` to return the
 matrix.
-    + As we progress through the analysis we will add new expression matrices 
-    to expression slots, or elements (`elt`), which can be accessed with 
+    + As we progress through the analysis we will add new expression matrices
+    to expression slots, or elements (`elt`), which can be accessed with
     `assayDataElement(object, elt = ...)`
 * Segment & Sample annotations - accessed with `pData(object)`
 * Probe & Target information - accessed with `fData(object)`
 * To learn more about other accessory functions type: `?GeomxTools::sData`
 
 Both eSets and GeoMxSets use `esApply` to extend the
-[`apply`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/apply) 
-function to such objects. In addition to the `esApply` function defined by the 
-`ExpressionSet` class, we have built the `assayDataApply` function to allow you 
-to select which expression matrix `elt` you wish to use with the `esApply` 
-function. 
+[`apply`](https://www.rdocumentation.org/packages/base/versions/3.6.2/topics/apply)
+function to such objects. In addition to the `esApply` function defined by the
+`ExpressionSet` class, we have built the `assayDataApply` function to allow you
+to select which expression matrix `elt` you wish to use with the `esApply`
+function.
 
 ## Links & References
 
 GeoMx Background:
 
 * [Kidney Geomx Demo Dataset](http://nanostring-public-share.s3-website-us-west-2.amazonaws.com/GeoScriptHub/Kidney_Dataset_for_GeomxTools.zip)
-* [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/) - 
+* [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/) -
 Manuscript describing GeoMx Workflow and technology
 * [Data Analysis White Paper for DSP-NGS Assays](https://www.nanostring.com/resources/geomx-cta-data-whitepaper/)
 * [Zimmerman et al., 2022](https://www.biorxiv.org/content/10.1101/2021.09.29.462442v4) - Preprint on Whole Transcriptome Assay on GeoMx
@@ -1374,12 +1333,12 @@ Other NanoString R packages:
 
 ### MA Plot
 
-Another visualization for differential expression is an MA plot. With this 
-plot, we look for differences relative to expression within the baseline 
-feature. As we have filtered out genes with low expression, the MA plot will 
-not exhibit a traditional shape, but it can be useful in identifying targets 
-with relatively high fold change and baseline expression. In the plot below we 
-keep the labeled genes within the top 90th percentile of expression on average 
+Another visualization for differential expression is an MA plot. With this
+plot, we look for differences relative to expression within the baseline
+feature. As we have filtered out genes with low expression, the MA plot will
+not exhibit a traditional shape, but it can be useful in identifying targets
+with relatively high fold change and baseline expression. In the plot below we
+keep the labeled genes within the top 90th percentile of expression on average
 with an FDR of < 0.001 and a log~2~ FC > 0.5.
 
 ``` {r maPlot, fig.width = 8, fig.height = 12, fig.wide = TRUE, warning = FALSE, message = FALSE}
@@ -1398,7 +1357,7 @@ ggplot(subset(results, !Gene %in% neg_probes),
            color = Color, label = Gene)) +
     geom_hline(yintercept = c(0.5, -0.5), lty = "dashed") +
     scale_x_continuous(trans = "log2") +
-    geom_point(alpha = 0.5) + 
+    geom_point(alpha = 0.5) +
     labs(y = "Enriched in Glomeruli <- log2(FC) -> Enriched in Tubules",
          x = "Mean Expression",
          color = "Significance") +

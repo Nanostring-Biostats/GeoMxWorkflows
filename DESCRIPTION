@@ -14,7 +14,8 @@ Authors@R: c(person("Jason", "Reeves", email = "jreeves@nanostring.com", role = 
 Depends: R (>= 4.0), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
          methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, 
-         ggrepel, ggforce, cowplot, scales, umap, Rtsne, pheatmap, BiocStyle
+         ggrepel, ggforce, cowplot, scales, umap, Rtsne, pheatmap, BiocStyle,
+         networkD3
 Suggests: 
     rmarkdown,
     knitr
@@ -23,5 +24,5 @@ BiocType: Workflow
 biocViews: GeneExpressionWorkflow, ImmunoOncologyWorkflow, SpatialWorkflow
 VignetteEngine: knitr::rmarkdown
 VignetteBuilder: knitr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 Config/testthat/edition: 3
