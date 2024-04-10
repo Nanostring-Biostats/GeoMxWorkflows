@@ -1269,7 +1269,7 @@ While this vignette has focused on the full data analysis workflow, we have
 created additional vignettes to describe in detail the functionalaties and
 tools built into the `GeomxTools` package that more advanced users may be
 interested in. Please see the
-[GeomxTools Vignette](https://bioconductor.org/packages/release/bioc/vignettes/GeomxTools/inst/doc/Introduction.html)
+[GeomxTools Vignette](https://bioconductor.org/packages/release/bioc/vignettes/GeomxTools/inst/doc/Developer_Introduction_to_the_NanoStringGeoMxSet.html)
 for more detailed information on all `GeomxTools` documentation.
 
 ## GeoMxSet Object Overview
@@ -1315,7 +1315,7 @@ GeoMx Background:
 * [Merritt et al., 2020](https://pubmed.ncbi.nlm.nih.gov/32393914/) -
 Manuscript describing GeoMx Workflow and technology
 * [Data Analysis White Paper for DSP-NGS Assays](https://www.nanostring.com/resources/geomx-cta-data-whitepaper/)
-* [Zimmerman et al., 2022](https://www.biorxiv.org/content/10.1101/2021.09.29.462442v4) - Preprint on Whole Transcriptome Assay on GeoMx
+* [Zimmerman et al., 2022](https://genome.cshlp.org/content/early/2022/10/18/gr.276206.121.full.pdf+html) - Whole Transcriptome Assay on GeoMx
 
 Statistics & Packages:
 
