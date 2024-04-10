@@ -4,13 +4,13 @@ Description: Workflows for use with NanoString Technologies GeoMx Technology.  P
 Version: 1.7.2
 Encoding: UTF-8
 Authors@R: c(person("Maddy", "Griswold", email = "mgriswold@nanostring.com", role = c("cre", "aut")),
-             person("Jason", "Reeves", email = "jreeves@nanostring.com", role = c("aut")), 
+             person("Jason", "Reeves", role = c("aut")), 
              person("Prajan", "Divakar", email = "pdivakar@nanostring.com", role = c("aut")),
              person("Nicole", "Ortogero", email = "nortogero@nanostring.com", role = c("aut")),
-             person("Zhi", "Yang", email = "zyang@nanostring.com", role = c("aut")),
-             person("Stephanie", "Zimmerman", email = "szimmerman@nanostring.com", role = c("aut")),
+             person("Zhi", "Yang", role = c("aut")),
+             person("Stephanie", "Zimmerman", role = c("aut")),
              person("Rona", "Vitancol", email = "rvitancol@nanostring.com", role = c("aut")),
-             person("Henderson", "David", email = "dhenderson@nanostring.com", role = c("aut")))
+             person("Henderson", "David", role = c("aut")))
 Depends: R (>= 4.0), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
          methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, 
