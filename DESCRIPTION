@@ -10,7 +10,7 @@ Authors@R: c(person("Maddy", "Griswold", email = "mgriswold@nanostring.com", rol
              person("Zhi", "Yang", role = c("aut")),
              person("Stephanie", "Zimmerman", role = c("aut")),
              person("Rona", "Vitancol", email = "rvitancol@nanostring.com", role = c("aut")),
-             person("Henderson", "David", role = c("aut")))
+             person("David", "Henderson", role = c("aut")))
 Depends: R (>= 4.0), NanoStringNCTools, GeomxTools
 Imports: Biobase, S4Vectors, rjson, readxl, EnvStats, dplyr, reshape2,
          methods, utils, stats, data.table, outliers, BiocGenerics, ggplot2, 
