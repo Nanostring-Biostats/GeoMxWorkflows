@@ -284,7 +284,7 @@ ROI/AOI segment.
 
 Every ROI/AOI segment will be tested for:
 
-* Raw sequencing reads: segments with >1000 raw reads are removed.
+* Raw sequencing reads: segments with <1000 raw reads are removed.
 * % Aligned,% Trimmed, or % Stitched sequencing reads: segments below ~80% for 
 one or more of these QC parameters are removed.
 * % Sequencing saturation ([1-deduplicated reads/aligned reads]%): segments 
