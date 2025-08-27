@@ -367,8 +367,8 @@ QC_histogram <- function(assay_data = NULL,
                          thr = NULL,
                          scale_trans = NULL) {
     plt <- ggplot(assay_data,
-                  aes_string(x = paste0("unlist(`", annotation, "`)"),
-                             fill = fill_by)) +
+                  aes(x = unlist(.data[[annotation]]),
+                             fill = .data[[fill_by]])) +
         geom_histogram(bins = 50) +
         geom_vline(xintercept = thr, lty = "dashed", color = "black") +
         theme_bw() + guides(fill = "none") +
